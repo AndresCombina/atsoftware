@@ -6,90 +6,129 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container py-4">
-        <h1>Crear Producto</h1>
+    <div class="container py-5">
+        <h2 class="mb-4">Cargar nuevo producto</h2>
 
-@if ($errors->any())
-    <div style="color: red;">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
-<form action="{{ route('productos.store') }}" method="POST">
-    @csrf
+        <form method="POST" action="#">
+            @csrf
 
-    <label>Nombre:</label><br>
-    <input type="text" name="nombre" value="{{ old('nombre') }}"><br><br>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="nombre" class="form-label">Nombre</label>
+                    <input type="text" name="nombre" class="form-control" value="{{ old('nombre') }}">
+                </div>
 
-    <label>Marca:</label><br>
-    <select name="marca_id">
-        <option value="">Seleccionar</option>
-        @foreach ($marcas as $marca)
-            <option value="{{ $marca->id }}" {{ old('marca_id') == $marca->id ? 'selected' : '' }}>
-                {{ $marca->nombre }}
-            </option>
-        @endforeach
-    </select><br><br>
+                <div class="col-md-6">
+                    <label for="precio" class="form-label">Precio</label>
+                    <input type="number" step="0.01" name="precio" class="form-control" value="{{ old('precio') }}">
+                </div>
+            </div>
 
-    <label>Rubro:</label><br>
-    <select name="rubro_id">
-        <option value="">Seleccionar</option>
-        @foreach ($rubros as $rubro)
-            <option value="{{ $rubro->id }}" {{ old('rubro_id') == $rubro->id ? 'selected' : '' }}>
-                {{ $rubro->nombre }}
-            </option>
-        @endforeach
-    </select><br><br>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="stock" class="form-label">Stock</label>
+                    <input type="number" name="stock" class="form-control" value="{{ old('stock') }}">
+                </div>
 
-    <label>Subrubro:</label><br>
-    <select name="subrubro_id">
-        <option value="">Seleccionar</option>
-        @foreach ($subrubros as $subrubro)
-            <option value="{{ $subrubro->id }}" {{ old('subrubro_id') == $subrubro->id ? 'selected' : '' }}>
-                {{ $subrubro->nombre }}
-            </option>
-        @endforeach
-    </select><br><br>
+                <div class="col-md-6">
+                    <label for="serie" class="form-label">Serie</label>
+                    <select name="serie" class="form-select">
+                        <option value="">-- Seleccionar --</option>
+                        <option value="A" {{ old('serie') == 'A' ? 'selected' : '' }}>A</option>
+                        <option value="B" {{ old('serie') == 'B' ? 'selected' : '' }}>B</option>
+                    </select>
+                </div>
+            </div>
 
-    <label>Grupo:</label><br>
-    <select name="grupo_id">
-        <option value="">Seleccionar</option>
-        @foreach ($grupos as $grupo)
-            <option value="{{ $grupo->id }}" {{ old('grupo_id') == $grupo->id ? 'selected' : '' }}>
-                {{ $grupo->nombre }}
-            </option>
-        @endforeach
-    </select><br><br>
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">Listado</label>
+                    <select name="listado_id" class="form-select">
+                        <option value="">-- Seleccionar --</option>
+                        <!-- Agregá tus listados dinámicamente -->
+                        <option value="1">Listado 1</option>
+                        <option value="2">Listado 2</option>
+                    </select>
+                </div>
 
-    <label>Serie:</label><br>
-    <input type="text" name="serie" value="{{ old('serie') }}"><br><br>
+                <div class="col-md-4">
+                    <label class="form-label">Marca</label>
+                    <select name="marca_id" class="form-select">
+                        <option value="">-- Seleccionar --</option>
+                        @foreach ($marcas as $marca)
+                            <option value="{{ $marca->id }}" {{ old('marca_id') == $marca->id ? 'selected' : '' }}>
+                                {{ $marca->nombre }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
 
-    <label>Sector:</label><br>
-    <select name="sector_id">
-        <option value="">Seleccionar</option>
-        @foreach ($sectors as $sector)
-            <option value="{{ $sector->id }}" {{ old('sector_id') == $sector->id ? 'selected' : '' }}>
-                {{ $sector->nombre }}
-            </option>
-        @endforeach
-    </select><br><br>
+                <div class="col-md-4">
+                    <label class="form-label">Rubro</label>
+                    <select name="rubro_id" class="form-select">
+                        <option value="">-- Seleccionar --</option>
+                        @foreach ($rubros as $rubro)
+                            <option value="{{ $rubro->id }}" {{ old('rubro_id') == $rubro->id ? 'selected' : '' }}>
+                                {{ $rubro->nombre }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
 
-    <label>Stock:</label><br>
-    <input type="number" name="stock" value="{{ old('stock', 0) }}"><br><br>
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">Subrubro</label>
+                    <select name="subrubro_id" class="form-select">
+                        <option value="">-- Seleccionar --</option>
+                        @foreach ($subrubros as $subrubro)
+                            <option value="{{ $subrubro->id }}" {{ old('subrubro_id') == $subrubro->id ? 'selected' : '' }}>
+                                {{ $subrubro->nombre }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
 
-    <label>Precio:</label><br>
-    <input type="text" name="precio" value="{{ old('precio') }}"><br><br>
+                <div class="col-md-4">
+                    <label class="form-label">Grupo</label>
+                    <select name="grupo_id" class="form-select">
+                        <option value="">-- Seleccionar --</option>
+                        @foreach ($grupos as $grupo)
+                            <option value="{{ $grupo->id }}" {{ old('grupo_id') == $grupo->id ? 'selected' : '' }}>
+                                {{ $grupo->nombre }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
 
-    <button type="submit">Guardar</button>
-</form>
+                <div class="col-md-4">
+                    <label class="form-label">Sector</label>
+                    <select name="sector_id" class="form-select">
+                        <option value="">-- Seleccionar --</option>
+                        @foreach ($sectors as $sector)
+                            <option value="{{ $sector->id }}" {{ old('sector_id') == $sector->id ? 'selected' : '' }}>
+                                {{ $sector->nombre }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
 
-<br>
-<a href="{{ route('productos.index') }}">Volver al listado</a>
-
+            <div class="d-flex justify-content-end mt-4">
+                <button type="reset" class="btn btn-secondary me-2">Limpiar</button>
+                <button type="submit" class="btn btn-primary">Guardar producto</button>
+            </div>
+        </form>
     </div>
 </body>
 </html>

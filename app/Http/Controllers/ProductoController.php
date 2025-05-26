@@ -76,10 +76,20 @@ public function store(Request $request)
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
-    {
-        //
-    }
+public function edit($id)
+{
+    $producto = Producto::findOrFail($id);
+    $marcas = Marca::all();
+    $rubros = Rubro::all();
+    $subrubros = Subrubro::all();
+    $grupos = Grupo::all();
+    $sectors = Sector::all();
+
+    return view('productos.edit', compact(
+        'producto', 'marcas', 'rubros', 'subrubros', 'grupos', 'sectors'
+    ));
+}
+
 
     /**
      * Update the specified resource in storage.
@@ -88,10 +98,35 @@ public function store(Request $request)
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
-        //
-    }
+public function update(Request $request, $id)
+{
+    $request->validate([
+        'nombre' => 'required|string|max:255',
+        'descripcion' => 'required|string',
+        'precio' => 'required|numeric',
+        'marca_id' => 'required|exists:marcas,id',
+        'rubro_id' => 'required|exists:rubros,id',
+        'subrubro_id' => 'required|exists:subrubros,id',
+        'grupo_id' => 'required|exists:grupos,id',
+        'sector_id' => 'required|exists:sectors,id',
+    ]);
+
+    $producto = Producto::findOrFail($id);
+
+    $producto->update([
+        'nombre' => $request->nombre,
+        'descripcion' => $request->descripcion,
+        'precio' => $request->precio,
+        'marca_id' => $request->marca_id,
+        'rubro_id' => $request->rubro_id,
+        'subrubro_id' => $request->subrubro_id,
+        'grupo_id' => $request->grupo_id,
+        'sector_id' => $request->sector_id,
+    ]);
+
+    return redirect()->route('productos.index')->with('success', 'Producto actualizado correctamente.');
+}
+
 
     /**
      * Remove the specified resource from storage.
