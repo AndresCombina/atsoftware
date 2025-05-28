@@ -19,3 +19,6 @@ use App\Http\Controllers\ProductoController;
 
 Route::resource('productos', ProductoController::class);
 Route::resource('productos', \App\Http\Controllers\ProductoController::class);
+use App\Http\Controllers\MarcaController;
+
+Route::resource('marcas', MarcaController::class);

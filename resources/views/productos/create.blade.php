@@ -19,7 +19,7 @@
             </div>
         @endif
 
-        <form method="POST" action="#">
+        <form action="{{ route('marcas.store') }}" method="POST">
             @csrf
 
             <div class="row mb-3">
@@ -61,16 +61,20 @@
                     </select>
                 </div>
 
+                <!-- Paso 1: Select de marca con botón "+" -->
                 <div class="col-md-4">
                     <label class="form-label">Marca</label>
-                    <select name="marca_id" class="form-select">
-                        <option value="">-- Seleccionar --</option>
-                        @foreach ($marcas as $marca)
-                            <option value="{{ $marca->id }}" {{ old('marca_id') == $marca->id ? 'selected' : '' }}>
-                                {{ $marca->nombre }}
-                            </option>
-                        @endforeach
-                    </select>
+                    <div class="d-flex">
+                        <select name="marca_id" id="marca_id" class="form-select me-2">
+                            <option value="">-- Seleccionar --</option>
+                            @foreach ($marcas as $marca)
+                                <option value="{{ $marca->id }}" {{ old('marca_id') == $marca->id ? 'selected' : '' }}>
+                                    {{ $marca->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#crearMarcaModal">+</button>
+                    </div>
                 </div>
 
                 <div class="col-md-4">
@@ -130,5 +134,72 @@
             </div>
         </form>
     </div>
+
+    <!-- Paso 2: Modal para crear marca -->
+    <div class="modal fade" id="crearMarcaModal" tabindex="-1" aria-labelledby="crearMarcaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form id="formCrearMarca">
+                @csrf
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="crearMarcaModalLabel">Crear nueva Marca</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="nombre_marca" class="form-label">Nombre de la marca</label>
+                            <input type="text" class="form-control" id="nombre_marca" name="nombre" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts Bootstrap + Paso 3: AJAX -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('formCrearMarca').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const nombre = document.getElementById('nombre_marca').value;
+
+            fetch("{{ route('marcas.store') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ nombre })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.id && data.nombre) {
+                    // Agregar la nueva marca al select
+                    const select = document.getElementById('marca_id');
+                    const option = document.createElement('option');
+                    option.value = data.id;
+                    option.text = data.nombre;
+                    option.selected = true;
+                    select.appendChild(option);
+
+                    // Cerrar modal y limpiar
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('crearMarcaModal'));
+                    modal.hide();
+                    document.getElementById('formCrearMarca').reset();
+                } else {
+                    alert('Error al crear la marca.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Hubo un error en el envío.');
+            });
+        });
+    </script>
 </body>
 </html>
