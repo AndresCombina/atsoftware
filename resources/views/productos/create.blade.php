@@ -87,6 +87,7 @@
                             </option>
                         @endforeach
                     </select>
+                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#crearRubroModal">+</button>
                 </div>
             </div>
 
@@ -135,7 +136,7 @@
         </form>
     </div>
 
-    <!-- Paso 2: Modal para crear marca -->
+    <!-- Modal para crear marca -->
     <div class="modal fade" id="crearMarcaModal" tabindex="-1" aria-labelledby="crearMarcaModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <form id="formCrearMarca">
@@ -160,7 +161,33 @@
         </div>
     </div>
 
-    <!-- Scripts Bootstrap + Paso 3: AJAX -->
+<!-- Modal para crear Rubro -->
+    <div class="modal fade" id="crearRubroModal" tabindex="-1" aria-labelledby="crearRubroModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form id="formCrearRubro">
+                @csrf
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="crearRubroModalLabel">Crear nuevo Rubro</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="nombre_rubro" class="form-label">Nombre del Rubro</label>
+                            <input type="text" class="form-control" id="nombre_rubro" name="nombre" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Scripts Bootstrap Marca AJAX -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.getElementById('formCrearMarca').addEventListener('submit', function(e) {
@@ -193,6 +220,47 @@
                     document.getElementById('formCrearMarca').reset();
                 } else {
                     alert('Error al crear la marca.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Hubo un error en el envío.');
+            });
+        });
+    </script>
+    <!-- Scripts Bootstrap Rubro AJAX -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('formCrearRubro').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const nombre = document.getElementById('nombre_rubro').value;
+
+            fetch("{{ route('rubro.store') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ nombre })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.id && data.nombre) {
+                    // Agregar la nueva marca al select
+                    const select = document.getElementById('rubro_id');
+                    const option = document.createElement('option');
+                    option.value = data.id;
+                    option.text = data.nombre;
+                    option.selected = true;
+                    select.appendChild(option);
+
+                    // Cerrar modal y limpiar
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('crearRubroModal'));
+                    modal.hide();
+                    document.getElementById('formCrearRubro').reset();
+                } else {
+                    alert('Error al crear el rubro.');
                 }
             })
             .catch(error => {

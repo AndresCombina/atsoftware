@@ -22,3 +22,6 @@ Route::resource('productos', \App\Http\Controllers\ProductoController::class);
 use App\Http\Controllers\MarcaController;
 
 Route::resource('marcas', MarcaController::class);
+use App\Http\Controllers\RubroController;
+
+Route::resource('rubro', RubroController::class);
